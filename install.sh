@@ -29,6 +29,7 @@ source ~/.bashrc
 if command -v pts >/dev/null; then
   echo -e "\n✅ Kurulum tamamlandı!"
   echo -e "🚀 Artık sadece 'pts' yazarak dilini çalıştırabilirsin!\n"
+chmod +x ~/pts/pts
 else
   echo "❌ pts komutu tanımlanamadı, elle kontrol et."
 fi
