@@ -1,0 +1,105 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+CMD=$1
+FILE=$2
+
+if [[ -z "$CMD" ]]; then
+clear
+cat << 'EOF'
+- Welcome to the PainTextRss language, producer Erdem KÖSE - 2025 (Rss Company)
+
+Supported Syntax:
+
+🟩 VARIABLE DECLARATION:
+/name - 'erdem'           → same as: name = "erdem"
+
+🟩 PRINTING:
++("Hello ~name")          → same as: print("Hello " .. name)
+
+🟩 FUNCTION DEFINITION & CALLING:
+def greet()
++("Hello")
+;
+!greet()                  → calls function "greet"
+
+🟩 FUNCTION WITH PARAMETERS:
+def hello(who)
++("Hello ~who")
+;
+!hello('Ali')
+
+🟩 RETURN VALUE:
+def add(a, b)
+return a + b
+;
+
+🟩 USER INPUT (STRING):
+infor("What is your name?")
+read /name - toread
+
+🟩 USER INPUT (NUMBER):
+infor("Enter a number")
+read /num - tonumber(toread)
+
+🟩 CONDITIONAL STATEMENTS:
+if ~name == 'erdem' then
++("Your name is Erdem")
+*
++("Your name is not Erdem")
+;
+
+🟩 SLEEP / DELAY:
+uy(1)                     → wait for 1 second
+
+🟩 LOOP - WHILE:
+while ~ do
++("looping")
+uy(1)
+;
+
+🟩 LOOP - FOR:
+for 1 to 5 do
++("Message")
+;
+
+🟩 COMMENTS:
+-- This is a comment
+
+🟩 LISTS:
+fruits + ("apple / banana / cherry")
+
+🟩 RANDOM LOOP FROM LIST:
+for 'item', random ~fruits do
++(item)
+;
+
+🟩 FILE WRITE & READ:
+write("file.txt", "Hello")
+readfile("file.txt", /data - toread)
+
+🟩 RUN TERMINAL COMMAND:
+run("ls")
+
+---
+Usage:
+  pts script.pts        → Run a PTS script
+  pts -l script.pts     → Convert PTS to Lua
+  pts -p script.pts     → Convert PTS to Python
+EOF
+exit 0
+fi
+
+# Lua Çeviri
+if [[ "$CMD" == "-l" ]]; then
+    lua ~/pts/pts_to_lua.lua "$FILE"
+    exit 0
+fi
+
+# Python Çeviri
+if [[ "$CMD" == "-p" ]]; then
+    python ~/pts/pts_to_py.py "$FILE"
+    exit 0
+fi
+
+# Kod çalıştırma
+lua ~/pts/pts_interpreter.lua "$CMD"
