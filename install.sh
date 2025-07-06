@@ -1,44 +1,53 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-echo "🔧 PainTextRss tam otomatik kurulum başlatılıyor..."
+echo "🔧 PainTextRss (PTS) tam otomatik kurulum başlatılıyor..."
 
-# 1. pts klasörünü /sdcard/Downloads'tan ~ içine taşı
+# 1. pts klasörünü taşı (eğer varsa)
 if [ -d /sdcard/Downloads/pts ]; then
-  mv /sdcard/Downloads/pts ~/
-  echo "📦 pts klasörü taşındı → ~/pts"
-fi
-
-# 2. pts dosyasına çalıştırma izni ver
-if [ -f ~/pts/pts ]; then
-  chmod +x ~/pts/pts
-  echo "✅ pts çalıştırılabilir hale getirildi"
+    mv /sdcard/Downloads/pts ~/
+    echo "📦 Klasör taşındı: /sdcard/Downloads/pts → ~/pts"
 else
-  echo "❌ ~/pts/pts bulunamadı, çıkılıyor"
-  exit 1
+    echo "ℹ️ Klasör zaten taşınmış olabilir (~/pts)"
 fi
 
-# 3. ~/bin klasörünü oluştur
+# 2. pts dosyasının varlığını kontrol et
+if [ ! -f ~/pts/pts ]; then
+    echo "❌ pts dosyası ~/pts içinde bulunamadı!"
+    exit 1
+fi
+
+# 3. ~/bin klasörü yoksa oluştur
 mkdir -p ~/bin
 
-# 4. pts komutunu ~/bin'e linkle
-ln -sf ~/pts/pts ~/bin/pts
-echo "🔗 pts linklendi → ~/bin/pts"
+# 4. eski link varsa sil ve yeniden oluştur
+rm -f ~/bin/pts
+ln -s ~/pts/pts ~/bin/pts
+echo "🔗 Symbolic link oluşturuldu: ~/bin/pts → ~/pts/pts"
 
-# 5. PATH'e ~/bin eklendi mi kontrol et
-if ! grep -q 'export PATH=$HOME/bin:$PATH' ~/.bashrc; then
-  echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
-  echo "✅ .bashrc içine PATH eklendi"
-else
-  echo "ℹ️ PATH zaten .bashrc içinde var"
-fi
+# 5. .bashrc ve .profile dosyalarına PATH ekle (eğer yoksa)
+for file in ~/.bashrc ~/.profile; do
+    if ! grep -q 'export PATH=\$HOME/bin:\$PATH' "$file"; then
+        echo 'export PATH=$HOME/bin:$PATH' >> "$file"
+        echo "✅ PATH satırı eklendi: $file"
+    else
+        echo "ℹ️ PATH zaten var: $file"
+    fi
+done
 
-# 6. .bashrc'yi yeniden yükle
-source ~/.bashrc
+# 6. PATH değişkenini elle aktif et
+export PATH=$HOME/bin:$PATH
 
-# 7. Son test
+# 7. pts dosyasına sonradan çalıştırma izni ver
+chmod +x ~/pts/pts
+echo "✅ Çalıştırma izni verildi: ~/pts/pts"
+
+# 8. Tüm ihtimallere karşı `hash` temizle
+hash -r
+
+# 9. Son test
 if command -v pts >/dev/null; then
-  echo -e "\n✅ Kurulum tamamlandı!"
-  echo -e "🚀 Artık sadece 'pts' yazarak dilini kullanabilirsin!\n"
+    echo -e "\n✅ Kurulum tamamlandı!"
+    echo -e "🚀 Artık sadece 'pts' yazarak PainTextRss dilini çalıştırabilirsin!"
 else
-  echo "❌ pts komutu hâlâ bulunamadı, elle kontrol etmen gerek."
+    echo -e "\n⚠️ 'pts' komutu henüz tanınmıyor. Termux'u kapatıp tekrar açarsan %99 çalışır."
 fi
