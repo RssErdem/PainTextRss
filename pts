@@ -4,8 +4,8 @@ CMD=$1
 FILE=$2
 
 if [[ -z "$CMD" ]]; then
-clear
-cat << 'EOF'
+  clear
+  cat << 'EOF'
 - Welcome to the PainTextRss language, producer Erdem KÖSE - 2025 (Rss Company)
 
 Supported Syntax:
@@ -86,20 +86,22 @@ Usage:
   pts -l script.pts     → Convert PTS to Lua
   pts -p script.pts     → Convert PTS to Python
 EOF
-exit 0
+  exit 0
 fi
 
-# Lua Çeviri
 if [[ "$CMD" == "-l" ]]; then
-    lua ~/pts/pts_to_lua.lua "$FILE"
-    exit 0
+  lua ~/pts/pts_to_lua.lua "$FILE"
+  exit 0
 fi
 
-# Python Çeviri
 if [[ "$CMD" == "-p" ]]; then
-    python ~/pts/pts_to_py.py "$FILE"
-    exit 0
+  python ~/pts/pts_to_py.py "$FILE"
+  exit 0
 fi
 
-# Kod çalıştırma
-lua ~/pts/pts_interpreter.lua "$CMD"
+if [[ -f "$CMD" ]]; then
+  lua ~/pts/pts_interpreter.lua "$CMD"
+else
+  echo "❌ File not found: $CMD"
+  exit 1
+fi
